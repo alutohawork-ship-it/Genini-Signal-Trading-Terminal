@@ -73,13 +73,9 @@
             <button onclick="setMethod('Day Trading')" id="m-Day Trading" class="method-btn px-3 py-1 rounded text-xs font-medium transition text-tv-muted hover:text-white">Day Trading</button>
         </div>
 
-        <!-- Right Section: API Keys & Execute -->
+        <!-- Right Section: Execute Button -->
         <div class="flex items-center gap-2">
-            <div class="relative flex items-center">
-                <i data-lucide="key-round" class="w-3.5 h-3.5 absolute left-2 text-tv-muted"></i>
-                <input type="password" id="geminiApiKey" placeholder="Gemini API Key" class="bg-tv-bg border border-tv-border focus:border-tv-blue rounded pl-7 pr-2 py-1 text-xs text-white focus:outline-none w-32 md:w-40">
-            </div>
-            <button onclick="generateAnalysis()" id="generateBtn" class="flex items-center gap-1.5 bg-tv-blue hover:bg-blue-600 text-white font-semibold px-3 py-1 rounded transition shadow-md">
+            <button onclick="generateAnalysis()" id="generateBtn" class="flex items-center gap-1.5 bg-tv-blue hover:bg-blue-600 text-white font-semibold px-4 py-1.5 rounded transition shadow-md">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                 <span>Generate</span>
             </button>
@@ -178,14 +174,6 @@ Belum ada analisis yang digenerate.
 
         lucide.createIcons();
 
-        // Otomatis mengisi input Gemini API Key dari konstanta di atas
-        const savedGeminiKey = localStorage.getItem('gemini_api_key') || GEMINI_KEY_DEFAULT;
-        document.getElementById('geminiApiKey').value = savedGeminiKey;
-        
-        document.getElementById('geminiApiKey').addEventListener('input', (e) => {
-            localStorage.setItem('gemini_api_key', e.target.value);
-        });
-
         window.onload = function() {
             updateChart();
         };
@@ -265,15 +253,10 @@ Belum ada analisis yang digenerate.
         }
 
         async function generateAnalysis() {
-            const apiKey = document.getElementById('geminiApiKey').value.trim();
+            const apiKey = GEMINI_KEY_DEFAULT;
             const pair = document.getElementById('pairInput').value.trim();
             const outputDiv = document.getElementById('resultOutput');
             const btn = document.getElementById('generateBtn');
-
-            if (!apiKey) {
-                alert('Mohon masukkan Gemini API Key terlebih dahulu di pojok kanan atas!');
-                return;
-            }
 
             btn.disabled = true;
             btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Analyzing...`;
@@ -335,7 +318,7 @@ reason entry :
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     outputDiv.innerText = data.candidates[0].content.parts[0].text;
                 } else {
-                    outputDiv.innerText = 'Gagal mendapatkan analisis. Pastikan Gemini API Key valid.';
+                    outputDiv.innerText = 'Gagal mendapatkan analisis. Periksa kembali jaringan/koneksi Anda.';
                 }
             } catch (error) {
                 outputDiv.innerText = 'Error: ' + error.message;
