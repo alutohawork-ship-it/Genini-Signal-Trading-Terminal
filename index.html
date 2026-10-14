@@ -91,8 +91,12 @@
             <button onclick="setMethod('Day Trading')" id="m-Day Trading" class="method-btn px-2.5 py-1 rounded text-xs font-medium transition text-tv-muted hover:text-white">Day Trading</button>
         </div>
 
-        <!-- Right Section: Execute Button -->
+        <!-- Right Section: API Key Input & Execute Button -->
         <div class="flex items-center gap-2 shrink-0 ml-auto">
+            <div class="relative flex items-center">
+                <i data-lucide="key" class="w-3.5 h-3.5 absolute left-2 text-tv-muted"></i>
+                <input type="password" id="apiKeyInput" placeholder="Masukkan Gemini API Key..." class="bg-tv-bg border border-tv-border focus:border-tv-blue rounded pl-7 pr-2 py-1 text-xs text-white font-mono w-36 sm:w-44 focus:outline-none transition">
+            </div>
             <button onclick="generateAnalysis()" id="generateBtn" class="flex items-center gap-1.5 bg-tv-blue hover:bg-blue-600 text-white font-semibold px-3 py-1.5 rounded transition shadow-md">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                 <span>Generate</span>
@@ -137,7 +141,7 @@
                 <div class="bg-tv-bg border border-tv-border rounded-lg p-2.5 text-xs space-y-1">
                     <div class="flex justify-between text-tv-muted">
                         <span>Live Feed:</span>
-                        <span id="livePriceText" class="text-tv-green font-mono font-medium">Ready (Gemini AQ Connected)</span>
+                        <span id="livePriceText" class="text-tv-green font-mono font-medium">Ready</span>
                     </div>
                     <div class="flex justify-between text-tv-muted">
                         <span>Top Down TF:</span>
@@ -156,16 +160,17 @@
                     <div id="resultOutput" class="bg-tv-bg border border-tv-border rounded-lg p-3 font-mono text-xs text-tv-text whitespace-pre-wrap leading-relaxed flex-1 min-h-[180px] lg:min-h-[300px] overflow-y-auto">
 Belum ada analisis yang digenerate.
 
-1. Pilih pair dari dropdown di atas.
-2. Klik tombol "Generate" untuk menjalankan analisis Gemini AI.
+1. Masukkan API Key Anda di kolom kanan atas.
+2. Pilih pair dari dropdown.
+3. Klik tombol "Generate".
                     </div>
                 </div>
             </div>
 
             <!-- Terminal Footer -->
             <div class="p-2.5 border-t border-tv-border bg-tv-bg text-[10px] text-tv-muted flex justify-between items-center shrink-0">
-                <span>Gemini 1.5 Flash (AQ Auth)</span>
-                <span class="text-tv-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tv-green animate-pulse"></span> Active</span>
+                <span>Gemini 1.5 Flash</span>
+                <span class="text-tv-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tv-green animate-pulse"></span> Standby</span>
             </div>
         </aside>
     </div>
@@ -176,13 +181,17 @@ Belum ada analisis yang digenerate.
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
         const TWELVE_DATA_KEY = "8c868d19f62d468592b6bd14f6df85c5"; 
-        const GEMINI_AQ_KEY = "AQ.Ab8RN6JCStN8r2qa0P8e-d68mkt_ZW99aJhEiRHxFMbZRsEXkA"; 
         let currentMethod = 'Scalping'; 
 
         lucide.createIcons();
 
         window.onload = function() {
             updateChart();
+            // Cek apakah ada saved API key di browser storage
+            const savedKey = localStorage.getItem('gemini_custom_api_key');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
         };
 
         function getSelectedPair() {
@@ -279,6 +288,15 @@ Belum ada analisis yang digenerate.
         }
 
         async function generateAnalysis() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (!apiKey) {
+                alert("Mohon masukkan API Key Gemini Anda terlebih dahulu di kolom kanan atas!");
+                return;
+            }
+
+            // Simpan API Key ke memory browser agar tidak perlu ketik ulang
+            localStorage.setItem('gemini_custom_api_key', apiKey);
+
             const pairRaw = getSelectedPair();
             const outputDiv = document.getElementById('resultOutput');
             const btn = document.getElementById('generateBtn');
@@ -287,7 +305,7 @@ Belum ada analisis yang digenerate.
             btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Analyzing...`;
             lucide.createIcons();
             
-            outputDiv.innerText = `Gemini AI sedang membedah struktur market ${pairRaw} dengan SMC, ICT, dan Price Action...`;
+            outputDiv.innerText = `Memproses analisis market ${pairRaw} menggunakan SMC & ICT...`;
 
             const marketData = await fetchLiveMarketData(pairRaw);
             let livePriceContext = "";
@@ -331,13 +349,19 @@ reason entry :
 [Penjelasan detail zona OB/Supply Demand/FVG, korelasi timeframe, dan konfirmasi price action/liquidity]`;
 
             try {
-                // Mengirim token AQ menggunakan header Authorization Bearer ke endpoint Gemini
-                const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent", {
+                // Cek apakah key menggunakan format AQ. atau standar
+                let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+                let headers = { 'Content-Type': 'application/json' };
+
+                if (apiKey.startsWith('AQ.')) {
+                    headers['Authorization'] = `Bearer ${apiKey}`;
+                } else {
+                    endpoint += `?key=${apiKey}`;
+                }
+
+                const response = await fetch(endpoint, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${GEMINI_AQ_KEY}`
-                    },
+                    headers: headers,
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: prompt }] }]
                     })
@@ -347,9 +371,9 @@ reason entry :
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     outputDiv.innerText = data.candidates[0].content.parts[0].text;
                 } else if (data.error) {
-                    outputDiv.innerText = 'Error Gemini API: ' + (data.error.message || JSON.stringify(data.error));
+                    outputDiv.innerText = 'Error API Gemini: ' + (data.error.message || JSON.stringify(data.error));
                 } else {
-                    outputDiv.innerText = 'Gagal mendapatkan analisis dari Gemini. Respon kosong.';
+                    outputDiv.innerText = 'Gagal mendapatkan analisis. Respon kosong.';
                 }
             } catch (error) {
                 outputDiv.innerText = 'Error Koneksi: ' + error.message;
