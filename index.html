@@ -152,9 +152,8 @@
                     <div id="resultOutput" class="bg-tv-bg border border-tv-border rounded-lg p-4 font-mono text-xs text-tv-text whitespace-pre-wrap leading-relaxed min-h-[300px]">
 Belum ada analisis yang digenerate.
 
-1. Masukkan Gemini API Key Anda di kanan atas.
-2. Ketik/Pilih Pair & Metode Trading.
-3. Klik tombol "Generate" untuk penarikan data live market & Top-Down Analysis.
+1. Ketik/Pilih Pair & Metode Trading yang diinginkan.
+2. Klik tombol "Generate" untuk penarikan data live market & Top-Down Analysis otomatis.
                     </div>
                 </div>
             </div>
@@ -162,25 +161,27 @@ Belum ada analisis yang digenerate.
             <!-- Terminal Footer -->
             <div class="p-3 border-t border-tv-border bg-tv-bg text-[10px] text-tv-muted flex justify-between items-center">
                 <span>TwelveData + Gemini 1.5 Flash</span>
-                <span class="text-tv-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tv-green animate-pulse"></span> Connected</span>
+                <span class="text-tv-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tv-green animate-pulse"></span> Auto Connected</span>
             </div>
         </aside>
     </div>
 
     <!-- ==========================================
          3. CONFIGURATION & JAVASCRIPT LOGIC
-         (Ditempatkan di awal script agar mudah diatur)
          ================================---------- -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // --- KONFIGURASI UTAMA ---
-        const TWELVE_DATA_KEY = "8c868d19f62d468592b6bd14f6df85c5"; // API Key Twelve Data Anda
-        let currentMethod = 'Scalping'; // Metode default
+        // --- KONFIGURASI UTAMA API KEYS ---
+        const TWELVE_DATA_KEY = "8c868d19f62d468592b6bd14f6df85c5"; 
+        const GEMINI_KEY_DEFAULT = "AQ.Ab8RN6LX_1BglAa-94OMoLIEhrsTyQJSr5M8z-GAPGsnyesBPw"; 
+        let currentMethod = 'Scalping'; 
 
         lucide.createIcons();
 
-        // Load saved Gemini API Key dari Browser LocalStorage
-        document.getElementById('geminiApiKey').value = localStorage.getItem('gemini_api_key') || '';
+        // Otomatis mengisi input Gemini API Key dari konstanta di atas
+        const savedGeminiKey = localStorage.getItem('gemini_api_key') || GEMINI_KEY_DEFAULT;
+        document.getElementById('geminiApiKey').value = savedGeminiKey;
+        
         document.getElementById('geminiApiKey').addEventListener('input', (e) => {
             localStorage.setItem('gemini_api_key', e.target.value);
         });
