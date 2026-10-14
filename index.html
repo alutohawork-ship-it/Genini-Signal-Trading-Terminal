@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Trading Master - Live Market Terminal</title>
+    <title>Trading Master Terminal - Claude AI</title>
     <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -43,59 +43,49 @@
          1. TOP TOOLBAR / NAVIGATION UI
          ================================---------- -->
     <header class="h-12 bg-tv-card border-b border-tv-border flex items-center justify-between px-3 text-xs shrink-0">
-        <!-- Left Section: Logo & Quick Pairs with Autocomplete -->
+        <!-- Left Section: Logo & Pair Selector Dropdown -->
         <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 font-bold text-sm text-white tracking-wide pr-3 border-r border-tv-border">
                 <i data-lucide="candlestick-chart" class="w-5 h-5 text-tv-blue"></i>
-                <span>GEMINI<span class="text-tv-blue">MASTER</span></span>
+                <span>TRADING<span class="text-tv-blue">MASTER</span></span>
             </div>
 
-            <!-- Pair Input with Datalist Autocomplete -->
+            <!-- Pair Selector & Input Universal -->
             <div class="flex items-center gap-2">
                 <div class="relative flex items-center">
-                    <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 text-tv-muted"></i>
-                    <input type="text" id="pairInput" list="tradingPairsList" value="XAUUSD" onchange="updateChart()" placeholder="Ketik pair (Cth: XAUUSD, BTCUSDT, US30)" class="bg-tv-bg border border-tv-border hover:border-tv-muted focus:border-tv-blue rounded pl-8 pr-2 py-1 text-xs font-mono font-semibold uppercase text-white focus:outline-none w-52 transition">
-                    
-                    <!-- Datalist untuk pilihan semua pair otomatis -->
-                    <datalist id="tradingPairsList">
-                        <!-- Komoditas & Logam -->
-                        <option value="XAUUSD">Gold / Emas</option>
-                        <option value="XAGUSD">Silver / Perak</option>
-                        <option value="USOIL">Crude Oil WTI</option>
-                        <option value="UKOIL">Brent Oil</option>
-                        <!-- Forex Majors & Crosses -->
-                        <option value="EURUSD">EUR/USD</option>
-                        <option value="GBPUSD">GBP/USD</option>
-                        <option value="USDJPY">USD/JPY</option>
-                        <option value="AUDUSD">AUD/USD</option>
-                        <option value="USDCAD">USD/CAD</option>
-                        <option value="NZDUSD">NZD/USD</option>
-                        <option value="EURGBP">EUR/GBP</option>
-                        <option value="EURJPY">EUR/JPY</option>
-                        <option value="GBPJPY">GBP/JPY</option>
-                        <!-- Crypto -->
-                        <option value="BTCUSDT">Bitcoin / USDT</option>
-                        <option value="ETHUSDT">Ethereum / USDT</option>
-                        <option value="SOLUSDT">Solana / USDT</option>
-                        <option value="XRPUSDT">XRP / USDT</option>
-                        <option value="BNBUSDT">Binance Coin / USDT</option>
-                        <option value="DOGEUSDT">Dogecoin / USDT</option>
-                        <!-- Indices (Bursa Saham Global) -->
-                        <option value="US30">Dow Jones Industrial Average</option>
-                        <option value="NAS100">Nasdaq 100</option>
-                        <option value="SPX500">S&P 500</option>
-                        <option value="GER40">DAX Germany 40</option>
-                        <option value="UK100">FTSE 100 UK</option>
-                        <option value="NIKKEI225">Nikkei 225 Japan</option>
-                    </datalist>
+                    <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 text-tv-muted z-10"></i>
+                    <!-- Dropdown Select Lengkap Semua Asset -->
+                    <select id="pairSelect" onchange="onPairDropdownChange(this.value)" class="bg-tv-bg border border-tv-border hover:border-tv-muted focus:border-tv-blue rounded pl-8 pr-4 py-1 text-xs font-mono font-semibold uppercase text-white focus:outline-none transition cursor-pointer">
+                        <optgroup label="⭐ Komoditas & Logam">
+                            <option value="XAUUSD">XAUUSD (Gold / Emas)</option>
+                            <option value="XAGUSD">XAGUSD (Silver / Perak)</option>
+                            <option value="USOIL">USOIL (Crude Oil)</option>
+                        </optgroup>
+                        <optgroup label="💱 Forex Majors">
+                            <option value="EURUSD">EURUSD</option>
+                            <option value="GBPUSD">GBPUSD</option>
+                            <option value="USDJPY">USDJPY</option>
+                            <option value="AUDUSD">AUDUSD</option>
+                            <option value="USDCAD">USDCAD</option>
+                            <option value="GBPJPY">GBPJPY</option>
+                        </optgroup>
+                        <optgroup label="₿ Crypto">
+                            <option value="BTCUSDT">BTCUSDT (Bitcoin)</option>
+                            <option value="ETHUSDT">ETHUSDT (Ethereum)</option>
+                            <option value="SOLUSDT">SOLUSDT (Solana)</option>
+                            <option value="XRPUSDT">XRPUSDT (XRP)</option>
+                        </optgroup>
+                        <optgroup label="📈 Indices / Saham Global">
+                            <option value="US30">US30 (Dow Jones)</option>
+                            <option value="NAS100">NAS100 (Nasdaq)</option>
+                            <option value="SPX500">SPX500 (S&P 500)</option>
+                            <option value="GER40">GER40 (DAX Germany)</option>
+                        </optgroup>
+                    </select>
                 </div>
-                
-                <div class="hidden xl:flex items-center gap-1">
-                    <button onclick="setPair('XAUUSD')" class="px-2 py-1 bg-tv-bg hover:bg-tv-hover rounded font-mono border border-tv-border text-tv-text hover:text-white">XAUUSD</button>
-                    <button onclick="setPair('EURUSD')" class="px-2 py-1 bg-tv-bg hover:bg-tv-hover rounded font-mono border border-tv-border text-tv-text hover:text-white">EURUSD</button>
-                    <button onclick="setPair('BTCUSDT')" class="px-2 py-1 bg-tv-bg hover:bg-tv-hover rounded font-mono border border-tv-border text-tv-text hover:text-white">BTCUSDT</button>
-                    <button onclick="setPair('US30')" class="px-2 py-1 bg-tv-bg hover:bg-tv-hover rounded font-mono border border-tv-border text-tv-text hover:text-white">US30</button>
-                </div>
+
+                <!-- Input manual khusus tampilan desktop -->
+                <input type="text" id="pairInput" value="XAUUSD" placeholder="Ketik pair..." onchange="updateChartFromInput(this.value)" class="bg-tv-bg border border-tv-border focus:border-tv-blue rounded px-2 py-1 text-xs font-mono font-semibold uppercase text-white focus:outline-none w-24 hidden md:block">
             </div>
         </div>
 
@@ -111,7 +101,7 @@
         <div class="flex items-center gap-2">
             <button onclick="generateAnalysis()" id="generateBtn" class="flex items-center gap-1.5 bg-tv-blue hover:bg-blue-600 text-white font-semibold px-4 py-1.5 rounded transition shadow-md">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                <span>Generate</span>
+                <span>Generate (Claude AI)</span>
             </button>
         </div>
     </header>
@@ -163,7 +153,7 @@
                 <div class="bg-tv-bg border border-tv-border rounded-lg p-3 text-xs space-y-1">
                     <div class="flex justify-between text-tv-muted">
                         <span>Live Feed Status:</span>
-                        <span id="livePriceText" class="text-tv-green font-mono font-medium">Ready (Universal Pair Support)</span>
+                        <span id="livePriceText" class="text-tv-green font-mono font-medium">Ready (Claude API Connected)</span>
                     </div>
                     <div class="flex justify-between text-tv-muted">
                         <span>Top Down TF:</span>
@@ -182,17 +172,17 @@
                     <div id="resultOutput" class="bg-tv-bg border border-tv-border rounded-lg p-4 font-mono text-xs text-tv-text whitespace-pre-wrap leading-relaxed min-h-[300px]">
 Belum ada analisis yang digenerate.
 
-1. Ketik atau pilih pair dari kolom pencarian (Forex, Crypto, Indices, Gold).
-2. Pilih metode trading.
-3. Klik "Generate" untuk menjalankan Top-Down Analysis berbasis AI.
+1. Pilih pair dari menu pilihan di atas (XAUUSD, Forex, Crypto, US30, dll.).
+2. Pilih metode trading (Scalping/Intraday/Swing).
+3. Klik "Generate (Claude AI)" untuk merumuskan analisis SMC & ICT otomatis.
                     </div>
                 </div>
             </div>
 
             <!-- Terminal Footer -->
             <div class="p-3 border-t border-tv-border bg-tv-bg text-[10px] text-tv-muted flex justify-between items-center">
-                <span>Gemini 1.5 Flash Engine</span>
-                <span class="text-tv-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tv-green animate-pulse"></span> Connected</span>
+                <span>Claude 3.5 Sonnet Engine</span>
+                <span class="text-tv-green flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tv-green animate-pulse"></span> Active</span>
             </div>
         </aside>
     </div>
@@ -204,7 +194,8 @@ Belum ada analisis yang digenerate.
     <script>
         // --- KONFIGURASI UTAMA API KEYS ---
         const TWELVE_DATA_KEY = "8c868d19f62d468592b6bd14f6df85c5"; 
-        const GEMINI_KEY_DEFAULT = "AQ.Ab8RN6LX_1BglAa-94OMoLIEhrsTyQJSr5M8z-GAPGsnyesBPw"; 
+        const CLAUDE_API_KEY = "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"; 
+        
         let currentMethod = 'Scalping'; 
 
         lucide.createIcons();
@@ -213,7 +204,22 @@ Belum ada analisis yang digenerate.
             updateChart();
         };
 
-        // --- FUNGSI FORMAT SYMBOL TRADINGVIEW & TWELVE DATA ---
+        // --- FUNGSI PEMILIHAN PAIR & TRADINGVIEW ---
+        function getSelectedPair() {
+            const dropdownVal = document.getElementById('pairSelect').value;
+            return dropdownVal || 'XAUUSD';
+        }
+
+        function onPairDropdownChange(val) {
+            document.getElementById('pairInput').value = val;
+            updateChart();
+        }
+
+        function updateChartFromInput(val) {
+            document.getElementById('pairSelect').value = val.toUpperCase();
+            updateChart();
+        }
+
         function formatTvSymbol(symbol) {
             let clean = symbol.trim().toUpperCase().replace('/', '');
             if (clean === 'XAUUSD' || clean === 'GOLD') return 'OANDA:XAUUSD';
@@ -253,13 +259,8 @@ Belum ada analisis yang digenerate.
         }
 
         function updateChart() {
-            const pair = document.getElementById('pairInput').value.trim() || 'XAUUSD';
+            const pair = getSelectedPair();
             initTradingView(pair);
-        }
-
-        function setPair(pairName) {
-            document.getElementById('pairInput').value = pairName;
-            updateChart();
         }
 
         function setMethod(methodName) {
@@ -284,7 +285,7 @@ Belum ada analisis yang digenerate.
             else if (methodName === 'Day Trading') tfText.innerText = "High-Confidence (1 Sinyal/Hari)";
         }
 
-        // --- FUNGSI TWELVE DATA & GEMINI AI GENERATOR ---
+        // --- FUNGSI TWELVE DATA & CLAUDE AI GENERATOR ---
         async function fetchLiveMarketData(pair) {
             try {
                 const formattedPair = formatTwelveDataSymbol(pair);
@@ -297,21 +298,20 @@ Belum ada analisis yang digenerate.
             } catch (err) {
                 console.warn('Gagal mengambil data TwelveData:', err);
             }
-            document.getElementById('livePriceText').innerText = 'Live Feed Active / Custom';
+            document.getElementById('livePriceText').innerText = 'Live Feed Active';
             return null;
         }
 
         async function generateAnalysis() {
-            const apiKey = GEMINI_KEY_DEFAULT;
-            const pairRaw = document.getElementById('pairInput').value.trim() || 'XAUUSD';
+            const pairRaw = getSelectedPair();
             const outputDiv = document.getElementById('resultOutput');
             const btn = document.getElementById('generateBtn');
 
             btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Analyzing...`;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Claude Analyzing...`;
             lucide.createIcons();
             
-            outputDiv.innerText = `Menganalisis struktur market ${pairRaw} menggunakan SMC & ICT Killzone...`;
+            outputDiv.innerText = `Claude sedang membedah struktur market ${pairRaw} dengan SMC, ICT, dan Price Action...`;
 
             const marketData = await fetchLiveMarketData(pairRaw);
             let livePriceContext = "";
@@ -331,7 +331,7 @@ Belum ada analisis yang digenerate.
 
             const cleanPairName = pairRaw.toUpperCase();
 
-            const prompt = `Bertindaklah sebagai Master Smart Money Concepts (SMC), ICT Killzone, dan Price Action Analyst yang presisi.
+            const prompt = `Bertindaklah sebagai Master Smart Money Concepts (SMC), ICT Killzone, dan Price Action Analyst yang sangat presisi.
 Lakukan analisis/generate setup trading profesional untuk pair: ${cleanPairName}.
 Metode yang dipilih: ${currentMethod} (${topDownRule}).
 ${livePriceContext}
@@ -339,7 +339,7 @@ ${livePriceContext}
 Aturan Analisis Wajib:
 1. Tentukan Sesi aktif saat ini (Asia / London / New York).
 2. Identifikasi Zona Interest Buy/Sell (Supply/Demand, Order Block fresh/unmitigated, Pullback/Retracement Fibonacci 0.5 - 0.786, Breakout/Reversal, Liquidity Grab/SFP/Inducement).
-3. Format angka harga: Ikuti format angka persis seperti pada chart real (termasuk titik desimal dan pemisah sesuai dengan harga pasar aktual pair tersebut).
+3. Format angka harga: Ikuti format angka persis seperti pada chart real (tanpa titik koma berlebih, contoh 2650.50 atau 1.0850).
 
 Format output HARUS persis seperti berikut tanpa tanda petik pembuka/penutup tambahan:
 "${cleanPairName}"
@@ -355,37 +355,34 @@ reason entry :
 [Penjelasan detail zona OB/Supply Demand/FVG, korelasi timeframe, dan konfirmasi price action/liquidity]`;
 
             try {
-                // Mendukung token Google Cloud / OAuth Bearer (AQ...) maupun API Key standar (AIza...)
-                let endpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent`;
-                let headers = { 'Content-Type': 'application/json' };
-
-                if (apiKey.startsWith('AIza')) {
-                    endpoint += `?key=${apiKey}`;
-                } else {
-                    headers['Authorization'] = `Bearer ${apiKey}`;
-                }
-
-                const response = await fetch(endpoint, {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
                     method: 'POST',
-                    headers: headers,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': CLAUDE_API_KEY,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
+                        model: "claude-3-5-sonnet-20241022",
+                        max_tokens: 1000,
+                        messages: [{ role: "user", content: prompt }]
                     })
                 });
 
                 const data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    outputDiv.innerText = data.candidates[0].content.parts[0].text;
+                if (data.content && data.content[0] && data.content[0].text) {
+                    outputDiv.innerText = data.content[0].text;
                 } else if (data.error) {
-                    outputDiv.innerText = 'Error API Gemini: ' + (data.error.message || JSON.stringify(data.error));
+                    outputDiv.innerText = 'Error Claude API: ' + (data.error.message || JSON.stringify(data.error));
                 } else {
-                    outputDiv.innerText = 'Gagal mendapatkan analisis. Respon kosong.';
+                    outputDiv.innerText = 'Gagal mendapatkan analisis dari Claude. Respon kosong.';
                 }
             } catch (error) {
                 outputDiv.innerText = 'Error Koneksi: ' + error.message;
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span>Generate</span>`;
+                btn.innerHTML = `<i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span>Generate (Claude AI)</span>`;
                 lucide.createIcons();
             }
         }
