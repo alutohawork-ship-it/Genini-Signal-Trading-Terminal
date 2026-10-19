@@ -1,12 +1,12 @@
-// Ganti bagian pemanggilan fetch AI dengan kode berikut:
-const aiResponse = await fetch("https://api.tinyfish.ai/v1/chat/completions", { // Sesuaikan base URL provider jika berbeda
+// Ganti bagian pemanggilan fetch AI dengan kode DeepSeek berikut:
+const aiResponse = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${geminiApiKey}` // Menggunakan Bearer token untuk format sk-...
+        "Authorization": `Bearer ${geminiApiKey}` // Variabel input form tetap bisa dipakai, masukkan key DeepSeek di kolom tersebut
     },
     body: JSON.stringify({
-        model: "gpt-4o-mini", // Atau model yang disediakan oleh provider tersebut
+        model: "deepseek-chat", // Model standar DeepSeek
         messages: [
             {
                 role: "system",
@@ -16,16 +16,18 @@ const aiResponse = await fetch("https://api.tinyfish.ai/v1/chat/completions", { 
                 role: "user",
                 content: `Analisis data candle M5 terakhir dari instrumen ${symbol} berikut: ${JSON.stringify(latestCandles)}. Harga running: ${currentPrice}. Berikan analisis struktur pasar, zona Order Block/FVG, serta sinyal Buy/Sell beserta Entry, SL, dan TP (RRR minimal 1:1.5).`
             }
-        ]
+        ],
+        stream: false
     })
 });
 
 if (!aiResponse.ok) {
-    throw new Error("Gagal memproses analisis dengan API Key yang diberikan.");
+    const errData = await aiResponse.json();
+    throw new Error(`Gagal memproses analisis dengan DeepSeek API: ${errData.error?.message || aiResponse.statusText}`);
 }
 
 const aiResult = await aiResponse.json();
 const analysisText = aiResult.choices[0].message.content;
 
-log("\n=== HASIL ANALISIS AI ===");
+log("\n=== HASIL ANALISIS DEEPSEEK AI ===");
 log(analysisText);
