@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trader Receh - Institutional Gold Terminal</title>
+    <title>Trader Receh - CurrencyFreak & DeepSeek Terminal</title>
     <style>
         :root {
             --bg-color: #0b0e14;
@@ -42,6 +42,25 @@
             padding: 15px;
             margin-bottom: 15px;
         }
+        .input-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        input {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 10px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
         .btn-scan {
             background: var(--accent-gold);
             color: #0b0e14;
@@ -53,6 +72,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: 0.2s;
+            margin-top: 10px;
         }
         .btn-scan:hover { background: #b89728; }
         .console {
@@ -82,135 +102,62 @@
     <header>
         <div>
             <h1>TRADER RECEH TERMINAL</h1>
-            <div class="subtitle">Multi-Timeframe SMC & ICT Scanner • Direct Access Mode</div>
+            <div class="subtitle">XAUUSD Live Feed via CurrencyFreak & DeepSeek AI Analysis</div>
         </div>
         <div>
-            <span class="badge badge-green">Credentials Active</span>
+            <span class="badge badge-green">CurrencyFreak Active</span>
         </div>
     </header>
 
     <div class="card">
+        <div class="input-group">
+            <label>API Key CurrencyFreak Anda:</label>
+            <input type="text" id="cfKey" placeholder="Tempel API Key CurrencyFreak Anda di sini...">
+        </div>
         <button class="btn-scan" onclick="startScanner()">JALANKAN PEMINDAIAN & ANALISIS SIGNALS</button>
     </div>
 
     <div class="grid-2">
         <div class="card">
             <h3 style="color:var(--accent-gold); margin-top:0;">Signal Dashboard</h3>
-            <div id="signalOutput" style="line-height: 1.6; font-size: 14px;">
+            <div id="signalOutput" style="line-height: 1.6; font-size: 14px; white-space: pre-line;">
                 <i>Menunggu pemindaian...</i>
             </div>
         </div>
 
         <div class="card">
             <h3 style="color:var(--accent-gold); margin-top:0;">Console Process Log</h3>
-            <div id="consoleLog" class="console">[SYSTEM] Terminal siap mendeteksi XAUUSD...</div>
+            <div id="consoleLog" class="console">[SYSTEM] Terminal siap mendeteksi XAUUSD via CurrencyFreak...</div>
         </div>
     </div>
 </div>
 
 <script>
-    const META_TOKEN = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJiNDQ2OGM4NWZkNTFlMDIzNDdjN2JlNGM5MDgzODYxMiIsImFjY2Vzc1J1bGVzIjpbeyJpZCI6InRyYWRpbmctYWNjb3VudC1tYW5hZ2VtZW50LWFwaSIsIm1ldGhvZHMiOlsidHJhZGluZy1hY2NvdW50LW1hbmFnZW1lbnQtYXBpOnJlc3Q6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6Im1ldGFhcGktcmVzdC1hcGkiLCJtZXRob2RzIjpbIm1ldGFhcGktYXBpOnJlc3Q6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6Im1ldGFhcGktcnBjLWFwaSIsIm1ldGhvZHMiOlsibWV0YWFwaS1hcGk6d3M6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6Im1ldGFhcGktcmVhbC10aW1lLXN0cmVhbWluZy1hcGkiLCJtZXRob2RzIjpbIm1ldGFhcGktYXBpOndzOnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIiwid3JpdGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19LHsiaWQiOiJtZXRhc3RhdHMtYXBpIiwibWV0aG9kcyI6WyJtZXRhc3RhdHMtYXBpOnJlc3Q6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6InJpc2stbWFuYWdlbWVudC1hcGkiLCJtZXRob2RzIjpbInJpc2stbWFuYWdlbWVudC1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoiY29weWZhY3RvcnktYXBpIiwibWV0aG9kcyI6WyJjb3B5ZmFjdG9yeS1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibXQtbWFuYWdlci1hcGkiLCJtZXRob2RzIjpbIm10LW1hbmFnZXItYXBpOnJlc3Q6ZGVhbGluZzoqOioiLCJtdC1tYW5hZ2VtZW50LWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIiwid3JpdGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19LHsiaWQiOiJiaWxsaW5nLWFwaSIsIm1ldGhvZHMiOlsiYmlsbGluZy1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfV0sImlnbm9yZVJhdGVLimGltaXRzOmZhbHNlLCJ0b2tlbklkIjoiMjAyMTAyMTMiLCJpbXBlcnNvbmF0ZWQiOmZhbHNlLCJyZWFsVXNlcklkIjoiYjQ0NjhjODVmZDUxZTAyMzQ3YzdiZTRjOTA4Mzg2MTIiLCJpYXQiOjE3OTI0MTQ4NTV9.bddavFIt3itIniUyWHrDKcsa5rgw48qNtJmWnu7CgX454pAIO56e--TjEPpGf5q7dqhBsPVE9ebxWOBQO9AHf91E6I7ICUW6Zyw8uFYKvP0ZJ831ex5fJIUOKqn4yzaVY43ff8K-dj-TrkjBEBOn5gj1Ein6NsFMWYGZyZEopHOssfPLf1Vg1fd9o07O1gi7zcJcSJdQ2nZgionzdn2X0Z86nZjP3-WPk-XmR3suNIgq_Vz5nUlJOG8CJo5737i_lrfL3C4Cx2vb76fJknR25QXSOSo7rApP_pb3WxZwex6jAiHyG5qIYfeVDorzi6YbEOPu29C7SCS7wfbjVChgNHdK6A4L42q6J8gzP0d7HirP9dZJMfnpN-Hx0U-39UMGvcqkDnS1xqgPl8XLX1T4BaCemFyZ9wFIbji8iXzu7jpjgJwX8Mg2AbJJpxZf2XJ5AIAIzRS-OzgqsVY9GLIqtZLnpEdxz9L8E0fVCsXu5E-xF6zzGlQtJh2Te_CDNRv3vP0-TvzZsRPCLp78qZ7Nt9VXyuNzVjn4vPe0pUztdRQ0dDS_kahFfwJmzZ1hS21gT9pjacaWpAa-V4w7pG3b8cWUFFZwyrOx68xcp5Ui1zaH_cb_DAnKPDrVLs4lNXbj9hGuHzvHArFQh3XMw7BfjGUYJm0UC_I3irDE2mImm7Y";
-    const ACCOUNT_ID = "4b634b6e3504438d99497f9aaa10d083";
     const DEEPSEEK_KEY = "AMSl9J6f9043RZ55PCoIUA==";
-    const SYMBOL = "XAUUSD";
 
     function printLog(msg) {
         const consoleEl = document.getElementById("consoleLog");
         const time = new Date().toLocaleTimeString();
-        consoleEl.innerText += `\n[${time}] ${msg}`;
+        consoleEl.innerText += `\n[${time}]${msg}`;
         consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
     async function startScanner() {
-        printLog("Memulai proses pemindaian XAUUSD...");
-        document.getElementById("signalOutput").innerText = "Sedang mengambil data & menganalisis...";
+        const cfKey = document.getElementById("cfKey").value.trim();
+        if (!cfKey) {
+            alert("Harap masukkan API Key CurrencyFreak Anda terlebih dahulu!");
+            return;
+        }
+
+        printLog("Memulai pemindaian XAUUSD via CurrencyFreak...");
+        document.getElementById("signalOutput").innerText = "Sedang mengambil harga & menganalisis...";
 
         try {
-            printLog(`Mengambil data candle M5 dari MetaApi (Akun: ${ACCOUNT_ID})...`);
+            printLog("Mengambil data kurs real-time XAUUSD dari CurrencyFreak...");
             
-            const now = new Date();
-            const past = new Date(now.getTime() - 4 * 60 * 60 * 1000);
-            const metaUrl = `https://mt-client-api-v1.agiliumtrade.ai/users/current/accounts/${ACCOUNT_ID}/historical-market-data/symbols/${SYMBOL}/timeframes/5m/candles?startTime=${past.toISOString()}`;
-
-            let response;
-            try {
-                response = await fetch(metaUrl, {
-                    headers: { "auth-token": META_TOKEN }
-                });
-            } catch (err) {
-                printLog("Menggunakan CORS Proxy alternatif...");
-                response = await fetch(`https://corsproxy.io/?${encodeURIComponent(metaUrl)}`, {
-                    headers: { "auth-token": META_TOKEN }
-                });
-            }
-
+            // Endpoint CurrencyFreak untuk mengambil rate XAU & USD
+            const cfUrl = `https://api.currencyfreak.com/v2.0/rates/latest?apikey=${cfKey}&symbols=XAU,USD`;
+            
+            const response = await fetch(cfUrl);
             if (!response.ok) {
-                throw new Error(`Gagal mengambil data broker (${response.status}). Pastikan akun MetaApi Anda dalam status aktif/deployed.`);
-            }
-
-            const candles = await response.json();
-            if (!candles || candles.length === 0) {
-                throw new Error("Data candle kosong dari broker.");
-            }
-
-            const latestPrice = candles[candles.length - 1].close;
-            printLog(`Harga XAUUSD Running: ${latestPrice}`);
-
-            printLog("Mengirim data ke DeepSeek AI untuk analisis struktur SMC & ICT...");
-
-            const dsUrl = "https://api.deepseek.com/chat/completions";
-            const dsBody = {
-                model: "deepseek-chat",
-                messages: [
-                    {
-                        role: "system",
-                        content: "Anda adalah analis SMC dan ICT profesional. Berikan analisis tren, zona Order Block/FVG, serta format sinyal ringkas: ACTION (BUY/SELL/NO_TRADE), ENTRY ZONE, STOP LOSS, dan TAKE PROFIT."
-                    },
-                    {
-                        role: "user",
-                        content: `Analisis data M5 XAUUSD berikut: ${JSON.stringify(candles.slice(-20))}. Harga saat ini: ${latestPrice}.`
-                    }
-                ],
-                stream: false
-            };
-
-            let dsResponse;
-            try {
-                dsResponse = await fetch(dsUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${DEEPSEEK_KEY}`
-                    },
-                    body: JSON.stringify(dsBody)
-                });
-            } catch (err) {
-                dsResponse = await fetch(`https://corsproxy.io/?${encodeURIComponent(dsUrl)}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${DEEPSEEK_KEY}`
-                    },
-                    body: JSON.stringify(dsBody)
-                });
-            }
-
-            const dsData = await dsResponse.json();
-            if (!dsData.choices || dsData.choices.length === 0) {
-                throw new Error("Respon DeepSeek AI tidak valid.");
-            }
-
-            const resultText = dsData.choices[0].message.content;
-            printLog("Analisis Selesai!");
-            document.getElementById("signalOutputinnerHTML") = "";
-            document.getElementById("signalOutput").innerText = resultText;
-
-        } catch (error) {
-            printLog(`[ERROR] ${error.message}`);
-            document.getElementById("signalOutput").innerText = `Error: ${error.message}`;
-        }
-    }
-</script>
-
-</body>
-</html>
+                throw new Error(`Gagal mengambil data dari CurrencyFreak (Status: ${response.status
